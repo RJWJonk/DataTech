@@ -13,17 +13,16 @@ import java.util.Random;
  */
 public class UniformGenerator implements NumberGenerator {
 
-    private int range_min, range_max;
+    private int range_max;
     Random random = new Random();
     
-    public UniformGenerator(int range_min, int range_max) {
-        this.range_min = range_min;
+    public UniformGenerator(int range_max) {
         this.range_max = range_max;
     }
     
     @Override
     public int getNext() {
-        return random.nextInt(range_max-range_min)+range_min;
+        return random.nextInt(range_max);
     }
     
 }

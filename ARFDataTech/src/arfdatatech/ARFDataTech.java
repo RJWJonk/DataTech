@@ -3,7 +3,7 @@ package arfdatatech;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import javafx.util.Pair;
+import javafx.util.Pair;   
 
 public class ARFDataTech {
 
@@ -15,6 +15,11 @@ public class ARFDataTech {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        /*
+        Use this main function to set up tests for various parts. I'm going to make a new class
+        to write the 'real' experiments we're going to do.
+        */
+        
 //        String test = "test";
 //        NumberGenerator uni = new UniformGenerator(0, 20);
 //
@@ -23,7 +28,28 @@ public class ARFDataTech {
 //        for (int i = 0; i < 10; i++) {
 //            l.logdata(i, uni.getNext() % 2 == 0, uni.getNext() % 2 == 0);
 //        }
-        new ARFDataTech();
+        ArrayList<Integer> peaks = new ArrayList();
+        peaks.add((int)Math.pow(2,1));
+        peaks.add((int)Math.pow(2,1));
+        int range = (int) Math.pow(2, 24);        
+        int randomcount = 10;
+        
+        
+        NumberGenerator rng1 = new ZipfGenerator(range, 1, peaks);
+        NumberGenerator rng2 = new UniformGenerator(range);
+        
+       // int[][] results = new int[range][2];
+        
+        for (int i = 0; i < randomcount; i++) {
+            //results[rng1.getNext()][0]++;
+            //results[rng2.getNext()][1]++;
+            System.out.println("Zipf: " + rng1.getNext() + "\tUniform: " + rng2.getNext());
+        }
+//        for (int i = 0; i < results.length; i++) {
+//            System.out.println("Value " + i + "\t Zipf: " + results[i][0] + "\t Uniform: " + results[i][1]);
+//        }
+        
+        //new ARFDataTech();
 
     }
 
@@ -34,9 +60,9 @@ public class ARFDataTech {
         filters.add(arf);
         filters.add(arf2);
         List<QueryStrategy> queries = new ArrayList();
-        QueryStrategy qs = new QueryStrategy(20, new UniformGenerator(0, 50), 30);
+        QueryStrategy qs = new QueryStrategy(20, new UniformGenerator(50), 30);
         queries.add(qs);
-        qs = new QueryStrategy(10, new UniformGenerator(0, 50), 0);
+        qs = new QueryStrategy(10, new UniformGenerator(50), 0);
         queries.add(qs);
         runExperiment("test", filters, new DataBaseIndexer("DBtest", 50), false, queries);
     }
