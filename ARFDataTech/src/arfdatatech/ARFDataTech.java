@@ -28,29 +28,40 @@ public class ARFDataTech {
 //        for (int i = 0; i < 10; i++) {
 //            l.logdata(i, uni.getNext() % 2 == 0, uni.getNext() % 2 == 0);
 //        }
+        
+        
         ArrayList<Integer> peaks = new ArrayList();
-        peaks.add((int)Math.pow(2,1));
-        peaks.add((int)Math.pow(2,1));
-        int range = (int) Math.pow(2, 24);        
-        int randomcount = 10;
+        peaks.add(6);
+        peaks.add(13);
+        int range = (int) 20;        
+        int randomcount = 100000;
         
         
         NumberGenerator rng1 = new ZipfGenerator(range, 1, peaks);
         NumberGenerator rng2 = new UniformGenerator(range);
         
-       // int[][] results = new int[range][2];
+        int[][] results = new int[range][2];
         
         for (int i = 0; i < randomcount; i++) {
-            //results[rng1.getNext()][0]++;
-            //results[rng2.getNext()][1]++;
-            System.out.println("Zipf: " + rng1.getNext() + "\tUniform: " + rng2.getNext());
+            results[rng1.getNext()][0]++;
+            results[rng2.getNext()][1]++;
+            //System.out.println("Zipf  " + rng1.getNext() + "\tUniform  " + rng2.getNext());
         }
-//        for (int i = 0; i < results.length; i++) {
-//            System.out.println("Value " + i + "\t Zipf: " + results[i][0] + "\t Uniform: " + results[i][1]);
-//        }
+        for (int i = 0; i < results.length; i++) {
+            System.out.println("Key  " + i + "\t Zipf  " + results[i][0] + "\t Uniform  " + results[i][1]);
+        }
         
         //new ARFDataTech();
-
+//
+//        int dbsize = 1000;
+//        int keydomain = (int) Math.pow(2, 24);
+//        
+//        ArrayList<Integer> zipf = new ArrayList<>();
+//        zipf.add(keydomain/2);
+//        
+//        //DataBaseIndexer db = new DataBaseIndexer("testdb", dbsize, keydomain, new UniformGenerator(keydomain));
+//        DataBaseIndexer db = new DataBaseIndexer("testdb", dbsize, keydomain, new ZipfGenerator(keydomain, 0.5, zipf));
+//        System.out.println("Peak: " + keydomain/2);
     }
 
     private void do_main() {
@@ -64,7 +75,7 @@ public class ARFDataTech {
         queries.add(qs);
         qs = new QueryStrategy(10, new UniformGenerator(50), 0);
         queries.add(qs);
-        runExperiment("test", filters, new DataBaseIndexer("DBtest", 50), false, queries);
+        runExperiment("test", filters, new DataBaseIndexer("DBtest", 50,50, null), false, queries);
     }
 
     public short runExperiment(String name, List<Filter> filters, DataBaseIndexer db, boolean dbflag, List<QueryStrategy> queries) {
@@ -94,7 +105,8 @@ public class ARFDataTech {
 
                     boolean resultFilter = f.query(key, key + range);
                     if (resultFilter) {
-                        boolean resultDB = db.getKey(key, key + range);
+                        
+                        boolean resultDB = !(db.getKey(key, key + range)).isEmpty();
                         l.logdata(counter, true, resultDB);
                         
                         //false positive!!

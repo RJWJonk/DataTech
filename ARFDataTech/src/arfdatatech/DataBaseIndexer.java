@@ -5,7 +5,9 @@
  */
 package arfdatatech;
 
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 /**
  *
@@ -14,27 +16,48 @@ import java.util.Random;
 public class DataBaseIndexer {
 
     public final String name;
-    private boolean keys[];
+    private Set<Integer> keys;
+    private final int domain;
+    private NumberGenerator rng;
 
-    public DataBaseIndexer(String name, int size) {
+    public DataBaseIndexer(String name, int size, int domain, NumberGenerator rng) {
         this.name = name;
-        keys = new boolean[size];
+        this.domain = domain;
+        this.rng = rng;
+        keys = new HashSet<>(size * 2);
+
+        //fill the database
+        int todo = size;
+        while (todo > 0) {
+            System.out.println(todo);
+            int k = rng.getNext();
+            //System.out.println(k);
+            if (!keys.contains(k)) {
+                keys.add(k);
+                todo--;
+            }
+        }
+        System.out.println("The database " + name + " has been filled with " + keys.size() + " unique keys!");
+
+        for (Integer i : keys) {
+            System.out.println("key: " + i);
+        }
     }
 
     /**
-     * Get the entry for a key. In our implementation, only true or false is
-     * returned.
+     * Get the entry for a range of keys.
      *
      * @param key A key
-     * @return true if key in database, false otherwise
+     * @return A set of keys contained in the database, no additional 'load'
      */
-    public Boolean getKey(int key_min, int key_max) {
+    public Set<Integer> getKey(int key_min, int key_max) {
+        HashSet<Integer> res = new HashSet<>();
         for (int i = key_min; i <= key_max; i++) {
-            if (i < keys.length && keys[i]) {
-                return keys[i];
+            if (keys.contains(i)) {
+                res.add(i);
             }
         }
-        return false;
+        return res;
     }
 
     /**
@@ -43,13 +66,35 @@ public class DataBaseIndexer {
      * @param key The key to be added
      */
     public void addKey(int key) {
-        keys[key] = true;
+        if (!keys.contains(key)) {
+            keys.add(key);
+        }
     }
 
     public void removeKey(int key) {
-        keys[key] = false;
+        if (keys.contains(key)) {
+            keys.remove(key);
+        }
     }
 
     public void adjustDB() {
+        boolean removed = false;
+        while (!removed) {
+            int rkey = rng.getNext();
+            if (keys.contains(rkey)) {
+                keys.remove(rkey);
+                removed = true;
+            }
+        }
+        
+        boolean added = false;
+        while(!added) {
+            int akey = rng.getNext();
+            if(!keys.contains(akey)) {
+                keys.add(akey);
+                added = true;
+            }
+        }
+
     }
 }
