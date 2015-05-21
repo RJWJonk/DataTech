@@ -97,4 +97,8 @@ public class DataBaseIndexer {
         }
 
     }
+    
+    public Set<Integer> getkeys() {
+        return keys;
+    }
 }
