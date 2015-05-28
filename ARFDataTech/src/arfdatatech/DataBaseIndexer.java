@@ -98,4 +98,8 @@ public class DataBaseIndexer {
         }
         return -1;
     }
+    
+    public Set<Integer> getkeys() {
+        return keys;
+    }
 }
