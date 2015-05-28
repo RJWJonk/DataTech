@@ -29,7 +29,7 @@ public class DataBaseIndexer {
         //fill the database
         int todo = size;
         while (todo > 0) {
-            System.out.println(todo);
+            if(todo%100==0) System.out.println(todo);
             int k = rng.getNext();
             //System.out.println(k);
             if (!keys.contains(k)) {
@@ -77,7 +77,7 @@ public class DataBaseIndexer {
         }
     }
 
-    public void adjustDB() {
+    public int adjustDB() {
         boolean removed = false;
         while (!removed) {
             int rkey = rng.getNext();
@@ -93,8 +93,9 @@ public class DataBaseIndexer {
             if(!keys.contains(akey)) {
                 keys.add(akey);
                 added = true;
+                return akey;
             }
         }
-
+        return -1;
     }
 }

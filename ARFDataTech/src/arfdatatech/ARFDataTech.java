@@ -37,7 +37,7 @@ public class ARFDataTech {
         int randomcount = 100000;
         
         
-        NumberGenerator rng1 = new ZipfGenerator(range, 1, peaks);
+        NumberGenerator rng1 = new ZipfGenerator(range, 2, peaks);
         NumberGenerator rng2 = new UniformGenerator(range);
         
         int[][] results = new int[range][2];
@@ -121,7 +121,8 @@ public class ARFDataTech {
 
                 //done with query for all filters
                 if (dbflag) {
-                    db.adjustDB();
+                    int change = db.adjustDB();
+                    //TODO: update filter with db update!!
                 }
                 counter++;
                 todo--;
