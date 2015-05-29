@@ -69,7 +69,7 @@ public class BloomFilter extends Filter {
     }
 
     private int getHash(int k, int i) {
-        return (int) ((k*hashArray[i]) % bitArray.length);
+        return Math.abs( (int) ((k*hashArray[i]) % bitArray.length) );
     }
     
 }

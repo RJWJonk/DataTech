@@ -50,20 +50,20 @@ public class ARFFilter extends Filter {
         while (curTree < treeSize) {
             
             int[] curRange = rangeList.poll();
-            System.out.println(curRange[0] + "" + curRange[1]);
+            //System.out.println(curRange[0] + "" + curRange[1]);
             
             int midRange = (curRange[0] + curRange[1]) / 2;
             /* For a node with two leaves as children */
             if (ARFTree.get(curTree) == false && ARFTree.get(curTree + 1) == false) {
                 
-                System.out.println(curRange[0] + "" + midRange);
+                //System.out.println(curRange[0] + "" + midRange);
 
                 /* Checks left child if in range and if true */
                 if (checkRange(curRange[0], midRange, key_min, key_max) && leafValues.get(curLeaf) == true) {
                     return true;
                 }
                 
-                System.out.println(midRange + "" + curRange[1]);
+                //System.out.println(midRange + "" + curRange[1]);
                 
                 ++ curLeaf;
                 /* Checks right child if in range and if true */

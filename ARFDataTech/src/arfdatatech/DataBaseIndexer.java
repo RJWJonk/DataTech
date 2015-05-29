@@ -29,7 +29,7 @@ public class DataBaseIndexer {
         //fill the database
         int todo = size;
         while (todo > 0) {
-            if(todo%100==0) System.out.println(todo);
+            //if(todo%100==0) System.out.println(todo);
             int k = rng.getNext();
             //System.out.println(k);
             if (!keys.contains(k)) {
@@ -37,10 +37,10 @@ public class DataBaseIndexer {
                 todo--;
             }
         }
-        System.out.println("The database " + name + " has been filled with " + keys.size() + " unique keys!");
+        //System.out.println("The database " + name + " has been filled with " + keys.size() + " unique keys!");
 
         for (Integer i : keys) {
-            System.out.println("key: " + i);
+            //System.out.println("key: " + i);
         }
     }
 
