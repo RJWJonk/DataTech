@@ -22,11 +22,12 @@ public class ARFFilter extends Filter {
     private int[] filterRange;
 
     //might need to add variables to determine range of the filter, i.e. [0..15]
-    public ARFFilter(String name, int maxElements) {
+    public ARFFilter(String name, int maxElements, int[] range) {
         super(name);
         this.maxElements = maxElements;
-        int[] range = {0, 1};
-        setTree(new BitSet(2), new BitSet(2), range);
+        BitSet values = new BitSet(2);
+        values.set(0); values.set(1);
+        setTree(new BitSet(2), values, range);
     }
 
     public void setTree(BitSet tree, BitSet values, int[] range) {
@@ -121,7 +122,7 @@ public class ARFFilter extends Filter {
         escalate(key_min, key_max);
     }
     
-    public void escalate(int key_min, int key_max) {        
+    public void escalate(int key_min, int key_max) {     
         /* Values for the ranges */
         Queue<int[]> rangeList;
         rangeList = new LinkedList();
