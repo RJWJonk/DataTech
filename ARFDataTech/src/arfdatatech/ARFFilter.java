@@ -25,8 +25,8 @@ public class ARFFilter extends Filter {
     public ARFFilter(String name, int maxElements, int[] range) {
         super(name);
         this.maxElements = maxElements;
-        BitSet values = new BitSet(2);
-        values.set(0); values.set(1);
+        BitSet values = new BitSet(3);
+        values.set(1); values.set(2);
         setTree(new BitSet(2), values, range);
     }
 
@@ -34,6 +34,7 @@ public class ARFFilter extends Filter {
         ARFTree = tree;
         leafValues = values;
         this.filterRange = range;
+        //System.out.println(leafValues.toString());
     }
 
     @Override
@@ -154,11 +155,8 @@ public class ARFFilter extends Filter {
                             newTree.set(curNewTree); // A new subtree is added
                             int[] botRange = {curRange[0], midRange, 0};
                             rangeList.add(botRange);
-                            --curNewLeaf; // A leafvalue is removed.
-                            
-                        } else {
-                            
-                        }
+                            --curNewLeaf; // A leafvalue is removed.   
+                        } 
                         /* If no matching range, set new leaf to true */
                     } else {
                         newLeaves.set(curNewLeaf);
@@ -250,23 +248,14 @@ public class ARFFilter extends Filter {
 //        System.out.println("Leaves are:" + leafValues.get(1) + leafValues.get(2) + leafValues.get(3) + leafValues.get(4));
     }
     
-        //    private class ARF {
-    //        
-    //        private ARF left; //null = 1, !null=0
-    //        private ARF right; //null = 1, !null=0
-    //        
-    //        private ARF() {
-    //            numElements++;
-    //        }
-    //
-    //        private void removeARF() {
-    //            numElements--;
-    //        }
-    //
-    //    }
 
     public boolean isInRange(int minRange, int maxRange, int key_min, int key_max) {
         return minRange >= key_min && maxRange <= key_max;
+    }
+
+    @Override
+    public void addKey(int key_min, int key_max) {
+        //do something nice with this Tim
     }
 
 }

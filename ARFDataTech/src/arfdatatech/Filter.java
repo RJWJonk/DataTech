@@ -25,4 +25,12 @@ public abstract class Filter {
      * @param key_max The upper key value of the range
      */
     public abstract void adjustFilter(int key_min, int key_max);
+    
+    /**
+     * Called from the experiment to add a new key to the filter
+     * 
+     * @param key_min The lower key value of the range
+     * @param key_max The upper key value of the range
+     */
+    public abstract void addKey(int key_min, int key_max);
 }

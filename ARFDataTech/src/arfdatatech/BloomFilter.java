@@ -17,30 +17,30 @@ public class BloomFilter extends Filter {
     private int domain;
     private boolean[] bitArray;
     private long[] hashArray;
-    
+
     public BloomFilter(String name, int domain, int bpe, DataBaseIndexer dbi) {
         super(name);
-        this.domain=domain;
-        this.bitArray=new boolean[domain*bpe];
-        int numHash=(int)Math.ceil(bpe*Math.log(2));
+        this.domain = domain;
+        this.bitArray = new boolean[domain * bpe];
+        int numHash = (int) Math.ceil(bpe * Math.log(2));
         Random random = new Random();
         hashArray = new long[numHash];
-        for (int i=0; i<numHash;i++) {
-            hashArray[i]=random.nextLong();
+        for (int i = 0; i < numHash; i++) {
+            hashArray[i] = random.nextLong();
         }
         initializeFilter(dbi);
-        
+
     }
-    
+
     @Override
     public boolean query(int key_min, int key_max) {
-        
-        for (int k=key_min; k<=key_max; k++) {
+
+        for (int k = key_min; k <= key_max; k++) {
             boolean contains = true;
-            
-            for (int i=0; i<hashArray.length; i++) {
-                if (!bitArray[getHash(k,i)]){
-                    contains=false;
+
+            for (int i = 0; i < hashArray.length; i++) {
+                if (!bitArray[getHash(k, i)]) {
+                    contains = false;
                     break;
                 }
             }
@@ -48,28 +48,38 @@ public class BloomFilter extends Filter {
                 return true;
             }
         }
-        
+
         return false;
     }
 
     //this probably should remain empty of bloom filters??
     @Override
     public void adjustFilter(int key_min, int key_max) {
+        //do nothing
     }
 
     private void initializeFilter(DataBaseIndexer dbi) {
         Set<Integer> keys = dbi.getkeys();
         for (int k : keys) {
-            
+
             for (int i = 0; i < hashArray.length; i++) {
-                bitArray[getHash(k,i)] = true;
+                bitArray[getHash(k, i)] = true;
             }
-            
+
         }
     }
 
     private int getHash(int k, int i) {
-        return Math.abs( (int) ((k*hashArray[i]) % bitArray.length) );
+        return Math.abs((int) ((k * hashArray[i]) % bitArray.length));
     }
-    
+
+    @Override
+    public void addKey(int key_min, int key_max) {
+        for (int k = key_min; k <= key_max; k++) {
+            for (int i = 0; i < hashArray.length; i++) {
+                bitArray[getHash(k, i)] = true;
+            }
+        }
+    }
+
 }

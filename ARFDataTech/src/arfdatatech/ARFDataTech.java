@@ -223,10 +223,6 @@ public class ARFDataTech {
         double exponent = 3;
         int numPeaks = 5;
 
-        //mu value
-        int mu_min = 1;
-        int mu_max = 5;
-        int bitsperkey = 8;
 
         System.out.println("Now processing bpk " + bpk);
         System.out.println("11c");
@@ -313,11 +309,13 @@ public class ARFDataTech {
                     }
                 }
 
-                counter = 0;
+                int counter2 = 0;
                 //done with query for all filters
-                if (dbflag && ++counter % 3 == 0) {
+                if (dbflag && ++counter2 % 3 == 0) {
                     int change = db.adjustDB();
-                    //TODO: update filter with db update!!
+                    for (Filter f : filters) {
+                        f.addKey(key, key);
+                    }
                 }
                 counter++;
                 todo--;
