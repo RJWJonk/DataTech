@@ -26,7 +26,8 @@ public class ARFFilter extends Filter {
         super(name);
         this.maxElements = maxElements;
         BitSet values = new BitSet(3);
-        values.set(1); values.set(2);
+        values.set(1);
+        values.set(2);
         setTree(new BitSet(2), values, range);
     }
 
@@ -50,7 +51,6 @@ public class ARFFilter extends Filter {
 
             int[] curRange = rangeList.poll();
 
-
             int midRange = (curRange[0] + curRange[1]) / 2;
             /* For a node with two leaves as children */
             if (ARFTree.get(curTree) == false && ARFTree.get(curTree + 1) == false) {
@@ -60,7 +60,6 @@ public class ARFFilter extends Filter {
                 if (checkRange(curRange[0], midRange, key_min, key_max) && leafValues.get(curLeaf) == true) {
                     return true;
                 }
-
 
                 ++curLeaf;
 
@@ -122,8 +121,8 @@ public class ARFFilter extends Filter {
     public void adjustFilter(int key_min, int key_max) {
         escalate(key_min, key_max);
     }
-    
-    public void escalate(int key_min, int key_max) {     
+
+    public void escalate(int key_min, int key_max) {
         /* Values for the ranges */
         Queue<int[]> rangeList;
         rangeList = new LinkedList();
@@ -140,6 +139,9 @@ public class ARFFilter extends Filter {
         int curNewTree = 1;
         int curNewLeaf = 1;
 
+//        System.out.println(ARFTree.toString());
+//        System.out.println(leafValues.toString());
+
         while (!rangeList.isEmpty()) {
             /* Get the range of the new node */
             int[] curRange = rangeList.poll();
@@ -147,38 +149,36 @@ public class ARFFilter extends Filter {
 
             /* If a new node is made  */
             if (curRange[2] == 0) {
-                
+
                 /* Left node */
                 if (checkRange(curRange[0], midRange, key_min, key_max)) {
-                        /* If ranges match partially, have escalation */
-                        if (!isInRange(curRange[0], midRange, key_min, key_max)) {
-                            newTree.set(curNewTree); // A new subtree is added
-                            int[] botRange = {curRange[0], midRange, 0};
-                            rangeList.add(botRange);
-                            --curNewLeaf; // A leafvalue is removed.   
-                        } 
-                        /* If no matching range, set new leaf to true */
-                    } else {
-                        newLeaves.set(curNewLeaf);
+                    /* If ranges match partially, have escalation */
+                    if (!isInRange(curRange[0], midRange, key_min, key_max)) {
+                        newTree.set(curNewTree); // A new subtree is added
+                        int[] botRange = {curRange[0], midRange, 0};
+                        rangeList.add(botRange);
+                        --curNewLeaf; // A leafvalue is removed.   
                     }
-                    ++curLeaf;
-                    ++curNewLeaf;
-                    
-                    /* Checks right child if in range and if true */
-                    if (checkRange(midRange + 1, curRange[1], key_min, key_max)) {
-                        /* If ranges match partially, have escalation */
-                        if (!isInRange(midRange + 1, curRange[1], key_min, key_max)) {
-                            newTree.set(curNewTree + 1); // A new subtree is added
-                            int[] topRange = {midRange + 1, curRange[1], 0};
-                            rangeList.add(topRange);
-                            --curNewLeaf; // A leafvalue is removed.
-                        }
-                        /* If no matching range, set new leaf to true */
-                    } else  {
-                        newLeaves.set(curNewLeaf);
+                    /* If no matching range, set new leaf to true */
+                } else {
+                    newLeaves.set(curNewLeaf);
+                }
+                ++curNewLeaf;
+
+                /* Checks right child if in range and if true */
+                if (checkRange(midRange + 1, curRange[1], key_min, key_max)) {
+                    /* If ranges match partially, have escalation */
+                    if (!isInRange(midRange + 1, curRange[1], key_min, key_max)) {
+                        newTree.set(curNewTree + 1); // A new subtree is added
+                        int[] topRange = {midRange + 1, curRange[1], 0};
+                        rangeList.add(topRange);
+                        --curNewLeaf; // A leafvalue is removed.
                     }
-                    ++curLeaf;
-                    ++curNewLeaf;
+                    /* If no matching range, set new leaf to true */
+                } else {
+                    newLeaves.set(curNewLeaf);
+                }
+                ++curNewLeaf;
 
                 /* If an old node is used */
             } else {
@@ -207,6 +207,7 @@ public class ARFFilter extends Filter {
                     ++curNewLeaf;
                 }
 
+
                 /* Right child */
                 if (ARFTree.get(curTree + 1) == true) {
                     /* The toprange is made */
@@ -216,13 +217,13 @@ public class ARFFilter extends Filter {
                 } else {
                     /* Checks right child if in range and if true */
                     if (checkRange(midRange + 1, curRange[1], key_min, key_max) && leafValues.get(curLeaf) == true) {
-                        /* If ranges match partially, have escalation */
+                        /* If ranges match just partially, have escalation */
                         if (!isInRange(midRange + 1, curRange[1], key_min, key_max)) {
                             newTree.set(curNewTree + 1); // A new subtree is added
                             int[] topRange = {midRange + 1, curRange[1], 0};
                             rangeList.add(topRange);
-                            --curNewLeaf; // A leafvalue is removed.
-                            
+                            --curNewLeaf; // This leafvalue is not used
+
                         }
                         /* If true, and no matching range, set newleaf to true */
                     } else if (leafValues.get(curLeaf) == true) {
@@ -238,14 +239,19 @@ public class ARFFilter extends Filter {
 
             /* the new tree place is updated */
             curNewTree = curNewTree + 2;
+//            System.out.println(newTree.toString());
+//            System.out.println(newLeaves.toString());
+//            System.out.println("Tree old: " + curTree + ", new: " + curNewTree);
+//            System.out.println("Leaf old: " + curLeaf + ", new: " + curNewLeaf);
         }
 
-//        System.out.println("Tree is:" + ARFTree.get(1) + ARFTree.get(2) + ARFTree.get(3) + ARFTree.get(4) + ARFTree.get(5) + ARFTree.get(6));
-//        System.out.println("Leaves are:" + leafValues.get(1) + leafValues.get(2) + leafValues.get(3) + leafValues.get(4));
         ARFTree = newTree;
         leafValues = newLeaves;
-//        System.out.println("Tree is:" + ARFTree.get(1) + ARFTree.get(2) + ARFTree.get(3) + ARFTree.get(4) + ARFTree.get(5) + ARFTree.get(6));
-//        System.out.println("Leaves are:" + leafValues.get(1) + leafValues.get(2) + leafValues.get(3) + leafValues.get(4));
+
+    }
+    
+    public void deEscalate() {
+        
     }
     
 
