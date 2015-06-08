@@ -18,10 +18,10 @@ public class BloomFilter extends Filter {
     private boolean[] bitArray;
     private long[] hashArray;
 
-    public BloomFilter(String name, int domain, int bpe, DataBaseIndexer dbi) {
+    public BloomFilter(String name, int domain, int elements, int bpe, DataBaseIndexer dbi) {
         super(name);
         this.domain = domain;
-        this.bitArray = new boolean[domain * bpe];
+        this.bitArray = new boolean[elements * bpe];
         int numHash = (int) Math.ceil(bpe * Math.log(2));
         Random random = new Random();
         hashArray = new long[numHash];
