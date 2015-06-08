@@ -20,19 +20,16 @@ public class ARFFilterTest extends FilterTestCases {
     /* instances */
     protected void setInstance(String name) {
         int[] range = {0, 1};
-        instance = new ARFFilter(name, 0, range);
-        instance.setFilter(1);
+        instance = new ARFFilter(name, 0, range, 1);
     }
 
     protected void setInstance(String name, int maxElements) {
         int[] range = {0, 1};
-        instance = new ARFFilter(name, maxElements, range);
-        instance.setFilter(1);
+        instance = new ARFFilter(name, maxElements, range, 1);
     }
 
     protected void setInstance(String name, int maxElements, int[] range) {
-        instance = new ARFFilter(name, maxElements, range);
-        instance.setFilter(1);
+        instance = new ARFFilter(name, maxElements, range, 1);
     }
 
     /* Testing method testRAnge */
@@ -381,4 +378,68 @@ public class ARFFilterTest extends FilterTestCases {
         testFindDeEsc(tree, leaves, range, corr_min, corr_max, startValue);
         
     }
+
+    public void testRemoveRange(BitSet tree, BitSet leaves, int[] range, int[] clearRange, BitSet newTree, BitSet newLeaves) {
+        setInstance("test range removal", 100, range);
+        instance.setTree(tree, leaves, range);
+
+        instance.removeRange(clearRange);
+        
+        Assert.assertEquals("Same tree ", instance.getTree(), newTree); 
+    }
+    
+//    @Test
+    /* Single removal */
+    public void testRemoveRange1() {
+        BitSet tree = new BitSet(100); // Tree: 11.01.00.00
+        tree.set(1);
+        tree.set(2);
+        tree.set(4);
+
+        BitSet leaves = new BitSet(100); // Leaves: 1.01.10
+        leaves.set(1);
+        leaves.set(3);
+        leaves.set(4);
+        
+        int[] range = {0, 20};
+        int[] clearRange = {11, 20};
+        
+        BitSet newTree = new BitSet(100); // Tree: 10.01.00
+        newTree.set(1);
+        newTree.set(4);
+
+        BitSet newLeaves = new BitSet(100); // Leaves: 1.1.10
+        newLeaves.set(1);
+        newLeaves.set(2);
+        newLeaves.set(3);
+        
+        testRemoveRange(tree, leaves, range, clearRange, newTree, newLeaves);
+    }
+    
+    @Test
+    /* Double removal */
+    public void testRemoveRange2() {
+        BitSet tree = new BitSet(100); // Tree: 11.01.00.00
+        tree.set(1);
+        tree.set(2);
+        tree.set(4);
+
+        BitSet leaves = new BitSet(100); // Leaves: 1.01.10
+        leaves.set(1);
+        leaves.set(3);
+        leaves.set(4);
+        
+        int[] range = {0, 20};        
+        int[] clearRange = {6, 10};
+        
+        BitSet newTree = new BitSet(100); // Tree: 01.00
+        newTree.set(2);
+
+        BitSet newLeaves = new BitSet(100); // Leaves: 1.01
+        newLeaves.set(1);
+        newLeaves.set(3);
+        
+        testRemoveRange(tree, leaves, range, clearRange, newTree, newLeaves);
+    }
+    
 }

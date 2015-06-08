@@ -19,7 +19,7 @@ public class ARFFilter extends Filter {
     int numElements = 1;
     private final int maxElements;
     private int[] filterRange;
-    private int filter; // 0 - no adapt, 1 - simple adapt, 2 - more adapt
+    private final int filter; // 0 - no adapt, 1 - simple adapt, 2 - more adapt
     
     public static final int NO_ADAPT = 0;
     public static final int BIT_0 = 1;
@@ -34,15 +34,11 @@ public class ARFFilter extends Filter {
         super(name);
         this.maxElements = maxElements;
         this.filter=ftype;
-        BitSet values = new BitSet(3);
+        BitSet values = new BitSet();
         values.set(1);
         values.set(2);
-        setTree(new BitSet(maxElements * 2), values, range);
-    }
-
-    public void setFilter(final int type) {
-        filter = type;
-        timeOutValues = new BitSet(maxElements);
+        setTree(new BitSet(), values, range);
+        timeOutValues = new BitSet();
     }
 
     public void setTree(BitSet tree, BitSet values, int[] range) {
@@ -52,6 +48,14 @@ public class ARFFilter extends Filter {
         //System.out.println(leafValues.toString());
     }
 
+    public BitSet getTree() {
+        return ARFTree;
+    }
+    
+    public BitSet getLeaves() {
+        return leafValues;
+    }
+    
     @Override
     public boolean query(int key_min, int key_max) {
         Queue<int[]> rangeList;
@@ -480,6 +484,14 @@ public class ARFFilter extends Filter {
             curNewTree = curNewTree + 2;
         }
 
+        System.out.println(ARFTree.toString());
+        System.out.println(leafValues.toString());
+        ARFTree = newTree;
+        leafValues = newLeaves;
+        System.out.println(ARFTree.toString());
+        System.out.println(leafValues.toString());
+        System.out.println(nextRemove);
+        
         if (nextRemove == true) {
             removeRange(newClearRange);
         }
