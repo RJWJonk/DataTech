@@ -26,6 +26,7 @@ public class Logger {
     double dataHits_recent;
     double dataAccesses_recent;
     int totalQueries;
+    int totalQueries_recent;
     int interval = 300;
 
     public Logger(String name) {
@@ -62,20 +63,22 @@ public class Logger {
         if (totalQueries % interval == 0) {
             dataAccesses_recent = 0;
             dataHits_recent = 0;
+            totalQueries_recent = 0;
         }
 
         totalQueries++;
-        if (filter) {
+        totalQueries_recent++;
+        if (filter) { //if true -> look in db
             dataAccesses++;
             dataAccesses_recent++;
         }
-        if (data) {
+        if (data) { //if true -> found in db
             dataHits++;
             dataHits_recent++;
         }
 
         try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(f, true)))) {
-            writer.println(id + ";" + filter + ";" + data + ";" + (1 - dataHits_recent / dataAccesses_recent) + ";" + (1 - dataHits / dataAccesses));
+            writer.println(id + ";" + filter + ";" + data + ";" + (1 - dataHits_recent / totalQueries_recent ) + ";" + (1 - dataHits / dataAccesses ));
         } catch (Exception e) {
             return false;
         }
