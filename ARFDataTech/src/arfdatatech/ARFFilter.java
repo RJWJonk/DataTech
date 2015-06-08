@@ -16,20 +16,25 @@ import java.util.Random;
  */
 public class ARFFilter extends Filter {
 
-    static int numElements = 1;
+    int numElements = 1;
     private final int maxElements;
     private int[] filterRange;
-    private int filter; // 0: no adapt, 1: 0 - adapt, 2: 1 - adapt
+    private int filter; // 0 - no adapt, 1 - simple adapt, 2 - more adapt
+    
+    public static final int NO_ADAPT = 0;
+    public static final int BIT_0 = 1;
+    public static final int BIT_1 = 2;
 
     private BitSet ARFTree;
     private BitSet leafValues;
     private BitSet timeOutValues;
 
     //might need to add variables to determine range of the filter, i.e. [0..15]
-    public ARFFilter(String name, int maxElements, int[] range) {
+    public ARFFilter(String name, int maxElements, int[] range, int ftype) {
         super(name);
         this.maxElements = maxElements;
-        BitSet values = new BitSet(maxElements);
+        this.filter=ftype;
+        BitSet values = new BitSet(3);
         values.set(1);
         values.set(2);
         setTree(new BitSet(maxElements * 2), values, range);
@@ -140,6 +145,9 @@ public class ARFFilter extends Filter {
     }
 
     public void escalate(int key_min, int key_max) {
+        if (filter == 0 && numElements > maxElements) return;
+        //System.out.println(numElements + " -- " + maxElements);
+        
         /* Values for the ranges */
         Queue<int[]> rangeList;
         rangeList = new LinkedList();
