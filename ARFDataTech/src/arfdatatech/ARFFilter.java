@@ -306,7 +306,7 @@ public class ARFFilter extends Filter {
 
                 /* Checks left child if in range and if true */
                 if (leafValues.get(curLeaf) == false) {
-                    if (curTree / 2 >= removeValue && (timeOutValues.get(curLeaf) == false || filter == 1)) {
+                    if (curTree / 2 >= removeValue && (timeOutValues.get(curLeaf) == false || filter != 2)) {
                         return curRange;
                     }
                 }
@@ -315,7 +315,7 @@ public class ARFFilter extends Filter {
 
                 /* Checks left child if in range and if true */
                 if (leafValues.get(curLeaf) == false) {
-                    if (curTree / 2 >= removeValue && (timeOutValues.get(curLeaf) == false || filter == 1)) {
+                    if (curTree / 2 >= removeValue && (timeOutValues.get(curLeaf) == false || filter != 2)) {
                         return curRange;
                     }
                 }
@@ -356,6 +356,7 @@ public class ARFFilter extends Filter {
             /* Place in the tree is updated */
             curTree = curTree + 2;
         }
+        
         return findDeEsc(1);
     }
 
@@ -484,13 +485,13 @@ public class ARFFilter extends Filter {
             curNewTree = curNewTree + 2;
         }
 
-        System.out.println(ARFTree.toString());
-        System.out.println(leafValues.toString());
+//        System.out.println(ARFTree.toString());
+//        System.out.println(leafValues.toString());
         ARFTree = newTree;
         leafValues = newLeaves;
-        System.out.println(ARFTree.toString());
-        System.out.println(leafValues.toString());
-        System.out.println(nextRemove);
+//        System.out.println(ARFTree.toString());
+//        System.out.println(leafValues.toString());
+//        System.out.println(nextRemove);
         
         if (nextRemove == true) {
             removeRange(newClearRange);
