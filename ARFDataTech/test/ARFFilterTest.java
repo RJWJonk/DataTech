@@ -318,8 +318,6 @@ public class ARFFilterTest extends FilterTestCases {
 
     public void testFindDeEsc(BitSet tree, BitSet leaves, int[] range, int[] corr_min, int[] corr_max, int[] startValue) {
         setInstance("test FindDeEsc", 100, range);
-        
-
 
         instance.setTree(tree, leaves, range);
 
