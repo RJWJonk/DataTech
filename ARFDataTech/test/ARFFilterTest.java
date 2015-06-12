@@ -383,7 +383,7 @@ public class ARFFilterTest extends FilterTestCases {
         setInstance("test range removal", 100, range);
         instance.setTree(tree, leaves, range);
 
-        instance.removeRange(clearRange);
+        instance.removeRange(clearRange, true);
         
         Assert.assertEquals("Same tree ", instance.getTree(), newTree); 
     }
