@@ -16,7 +16,8 @@ import java.util.Random;
  */
 public class ARFFilter extends Filter {
 
-    int numElements = 1;
+    int numElements;
+    int numValues;
     private final int maxElements;
     private int[] filterRange;
     private final int filter; // 0 - no adapt, 1 - simple adapt, 2 - more adapt
@@ -34,6 +35,8 @@ public class ARFFilter extends Filter {
         super(name);
         this.maxElements = maxElements;
         this.filter = ftype;
+        numElements = 1;
+        numValues = 2;
         BitSet values = new BitSet();
         values.set(1);
         values.set(2);
@@ -77,8 +80,8 @@ public class ARFFilter extends Filter {
                 /* Checks left child if in range and if true */
                 if (checkRange(curRange[0], midRange, key_min, key_max) && leafValues.get(curLeaf) == true) {
                     if (filter == 2) {
-                    timeOutValues.set(curLeaf);
-                }
+                        timeOutValues.set(curLeaf);
+                    }
                     return true;
                 }
 
@@ -87,8 +90,8 @@ public class ARFFilter extends Filter {
                 /* Checks right child if in range and if true */
                 if (checkRange(midRange + 1, curRange[1], key_min, key_max) && leafValues.get(curLeaf) == true) {
                     if (filter == 2) {
-                    timeOutValues.set(curLeaf);
-                }
+                        timeOutValues.set(curLeaf);
+                    }
                     return true;
                 }
 
@@ -100,8 +103,8 @@ public class ARFFilter extends Filter {
                 /* Checks right child if in range and if true */
                 if (checkRange(midRange + 1, curRange[1], key_min, key_max) && leafValues.get(curLeaf) == true) {
                     if (filter == 2) {
-                    timeOutValues.set(curLeaf);
-                }
+                        timeOutValues.set(curLeaf);
+                    }
                     return true;
                 }
                 ++curLeaf;
@@ -115,8 +118,8 @@ public class ARFFilter extends Filter {
                 /* Checks left child if in range and if true */
                 if (checkRange(curRange[0], midRange, key_min, key_max) && leafValues.get(curLeaf) == true) {
                     if (filter == 2) {
-                    timeOutValues.set(curLeaf);
-                }
+                        timeOutValues.set(curLeaf);
+                    }
                     return true;
                 }
                 ++curLeaf;
@@ -150,12 +153,12 @@ public class ARFFilter extends Filter {
 
     @Override
     public void adjustFilter(int key_min, int key_max) {
-        if (filter == 0 && numElements > maxElements) {
+        if (filter == 0 && isTooBig()) {
             return;
         }
         escalate(key_min, key_max);
 
-        while (filter != 0 && numElements > maxElements) {
+        while (filter != 0 && isTooBig()) {
             deEscalate();
         }
     }
@@ -164,7 +167,7 @@ public class ARFFilter extends Filter {
         if (filter == 0 && numElements > maxElements) {
             return;
         }
-        //System.out.println(numElements + " -- " + maxElements);
+        System.out.println("Escalate: " + numElements * 3 + 1 + " -- " + maxElements);
 
         /* Values for the ranges */
         Queue<int[]> rangeList;
@@ -192,6 +195,7 @@ public class ARFFilter extends Filter {
             /* If a new node is made  */
             if (curRange[2] == 0) {
                 ++numElements;
+
 
                 /* Left node */
                 if (checkRange(curRange[0], midRange, key_min, key_max)) {
@@ -294,6 +298,7 @@ public class ARFFilter extends Filter {
     }
 
     public void deEscalate() {
+        System.out.println("De-escalate: " + numElements * 3 + 1 + " -- " + maxElements);
         Random rand = new Random();
         int removeValue = rand.nextInt(numElements);
 
@@ -315,12 +320,12 @@ public class ARFFilter extends Filter {
 
             int midRange = (curRange[0] + curRange[1]) / 2;
             /* For a node with two leaves as children */
-            if (ARFTree.get(curTree) == false && ARFTree.get(curTree + 1) == false) {
+            if (!ARFTree.get(curTree) && !ARFTree.get(curTree + 1)) {
 
 
                 /* Checks left child if in range and if true */
                 if (leafValues.get(curLeaf) == false) {
-                    if (curTree / 2 >= removeValue && (timeOutValues.get(curLeaf) == false || filter != 2)) {
+                    if (curTree / 2 >= removeValue && (!timeOutValues.get(curLeaf) && filter == 2) || filter != 2) {
                         return curRange;
                     }
                 }
@@ -329,7 +334,7 @@ public class ARFFilter extends Filter {
 
                 /* Checks left child if in range and if true */
                 if (leafValues.get(curLeaf) == false) {
-                    if (curTree / 2 >= removeValue && (timeOutValues.get(curLeaf) == false || filter != 2)) {
+                    if (curTree / 2 >= removeValue && (!timeOutValues.get(curLeaf) && filter == 2) || filter != 2) {
                         return curRange;
                     }
                 }
@@ -338,7 +343,7 @@ public class ARFFilter extends Filter {
 
 
                 /* For a node with the only a leaf in the right child */
-            } else if (ARFTree.get(curTree) == true && ARFTree.get(curTree + 1) == false) {
+            } else if (ARFTree.get(curTree) && !ARFTree.get(curTree + 1)) {
 
                 timeOutValues.clear(curLeaf);
                 ++curLeaf;
@@ -347,7 +352,7 @@ public class ARFFilter extends Filter {
                 rangeList.add(curRange);
 
                 /* For a node with the only a leaf in the left child */
-            } else if (ARFTree.get(curTree) == false && ARFTree.get(curTree + 1) == true) {
+            } else if (!ARFTree.get(curTree) && ARFTree.get(curTree + 1)) {
 
                 timeOutValues.clear(curLeaf);
                 ++curLeaf;
@@ -357,7 +362,7 @@ public class ARFFilter extends Filter {
                 rangeList.add(curRange);
 
                 /* For a node with no child leaves */
-            } else if (ARFTree.get(curTree) == true && ARFTree.get(curTree + 1) == true) {
+            } else if (ARFTree.get(curTree) && ARFTree.get(curTree + 1)) {
 
                 /* Two ranges are made */
                 int[] botRange = {curRange[0], midRange};
@@ -370,7 +375,7 @@ public class ARFFilter extends Filter {
             /* Place in the tree is updated */
             curTree = curTree + 2;
         }
-        
+
         return findDeEsc(1);
     }
 
@@ -510,7 +515,8 @@ public class ARFFilter extends Filter {
 //        System.out.println(ARFTree.toString());
 //        System.out.println(leafValues.toString());
 //        System.out.println(nextRemove);
-       
+
+        numElements--;
         if (nextRemove == true) {
             removeRange(newClearRange, newValue);
         }
@@ -585,14 +591,14 @@ public class ARFFilter extends Filter {
             optimizable = partialOptimize();
         }
     }
-    
+
     public boolean isInRange(int minRange, int maxRange, int key_min, int key_max) {
         return minRange >= key_min && maxRange <= key_max;
     }
 
     @Override
     public void addKey(int key_min, int key_max) {
-       Queue<int[]> rangeList;
+        Queue<int[]> rangeList;
         rangeList = new LinkedList();
         rangeList.add(filterRange.clone());
         int curTree = 1;
@@ -663,4 +669,7 @@ public class ARFFilter extends Filter {
         }
     }
 
+    public boolean isTooBig() {
+        return numElements * 3 + 1 > maxElements;
+    }
 }
