@@ -426,13 +426,13 @@ public class ARFFilter extends Filter {
 
                 if (clearRange[0] != curRange[0] || clearRange[1] != curRange[1]) {
                     /* Checks left child if in range and if true */
-                    if (leafValues.get(curLeaf) == true) {
+                    if (leafValues.get(curLeaf)) {
                         newLeaves.set(curNewLeaf);
                     }
                     ++curLeaf;
 
                     /* Checks right child if in range and if true */
-                    if (leafValues.get(curLeaf) == true) {
+                    if (leafValues.get(curLeaf)) {
                         newLeaves.set(curNewLeaf);
                     }
                     ++curLeaf;
@@ -491,14 +491,14 @@ public class ARFFilter extends Filter {
                 }
 
                 /* Checks left child if in range and if true */
-                if (leafValues.get(curLeaf) == true) {
+                if (leafValues.get(curLeaf)) {
                     newLeaves.set(curNewLeaf);
                 }
                 ++curNewLeaf;
                 ++curLeaf;
 
                 /* For a node with no child leaves */
-            } else if (ARFTree.get(curTree) == true && ARFTree.get(curTree + 1) == true) {
+            } else if (ARFTree.get(curTree) && ARFTree.get(curTree + 1)) {
 
                 if (clearRange[0] != curRange[0] || clearRange[1] != midRange) {
                     int[] botRange = {curRange[0], midRange};
@@ -506,7 +506,9 @@ public class ARFFilter extends Filter {
                     newTree.set(curNewTree);
                     /* Else, set it as a new leaf */
                 } else {
-                    newLeaves.set(curNewLeaf);
+                    if (newValue) {
+                        newLeaves.set(curNewLeaf);
+                    }
                     ++curNewLeaf;
                 }
 
@@ -517,7 +519,9 @@ public class ARFFilter extends Filter {
                     newTree.set(curNewTree + 1);
                     /* Else, set it as a new leaf */
                 } else {
-                    newLeaves.set(curNewLeaf);
+                    if (newValue) {
+                        newLeaves.set(curNewLeaf);
+                    }
                     ++curNewLeaf;
                 }
             }
@@ -562,7 +566,6 @@ public class ARFFilter extends Filter {
             if (ARFTree.get(curTree) == false && ARFTree.get(curTree + 1) == false) {
 
 
-                /* Checks left child if in range and if true */
                 if (leafValues.get(curLeaf) == leafValues.get(curLeaf + 1)) {
                     removeRange(curRange, leafValues.get(curLeaf));
                     return true;
