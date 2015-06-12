@@ -76,7 +76,9 @@ public class ARFFilter extends Filter {
 
                 /* Checks left child if in range and if true */
                 if (checkRange(curRange[0], midRange, key_min, key_max) && leafValues.get(curLeaf) == true) {
+                    if (filter == 2) {
                     timeOutValues.set(curLeaf);
+                }
                     return true;
                 }
 
@@ -84,7 +86,9 @@ public class ARFFilter extends Filter {
 
                 /* Checks right child if in range and if true */
                 if (checkRange(midRange + 1, curRange[1], key_min, key_max) && leafValues.get(curLeaf) == true) {
+                    if (filter == 2) {
                     timeOutValues.set(curLeaf);
+                }
                     return true;
                 }
 
@@ -95,7 +99,9 @@ public class ARFFilter extends Filter {
             } else if (ARFTree.get(curTree) == true && ARFTree.get(curTree + 1) == false) {
                 /* Checks right child if in range and if true */
                 if (checkRange(midRange + 1, curRange[1], key_min, key_max) && leafValues.get(curLeaf) == true) {
+                    if (filter == 2) {
                     timeOutValues.set(curLeaf);
+                }
                     return true;
                 }
                 ++curLeaf;
@@ -108,7 +114,9 @@ public class ARFFilter extends Filter {
 
                 /* Checks left child if in range and if true */
                 if (checkRange(curRange[0], midRange, key_min, key_max) && leafValues.get(curLeaf) == true) {
+                    if (filter == 2) {
                     timeOutValues.set(curLeaf);
+                }
                     return true;
                 }
                 ++curLeaf;
@@ -312,7 +320,7 @@ public class ARFFilter extends Filter {
 
                 /* Checks left child if in range and if true */
                 if (leafValues.get(curLeaf) == false) {
-                    if (curTree / 2 >= removeValue && (timeOutValues.get(curLeaf) == false || filter == 1)) {
+                    if (curTree / 2 >= removeValue && (timeOutValues.get(curLeaf) == false || filter != 2)) {
                         return curRange;
                     }
                 }
@@ -321,7 +329,7 @@ public class ARFFilter extends Filter {
 
                 /* Checks left child if in range and if true */
                 if (leafValues.get(curLeaf) == false) {
-                    if (curTree / 2 >= removeValue && (timeOutValues.get(curLeaf) == false || filter == 1)) {
+                    if (curTree / 2 >= removeValue && (timeOutValues.get(curLeaf) == false || filter != 2)) {
                         return curRange;
                     }
                 }
@@ -362,6 +370,7 @@ public class ARFFilter extends Filter {
             /* Place in the tree is updated */
             curTree = curTree + 2;
         }
+        
         return findDeEsc(1);
     }
 
@@ -490,27 +499,99 @@ public class ARFFilter extends Filter {
             curNewTree = curNewTree + 2;
         }
 
-        //System.out.println(ARFTree.toString());
-        //System.out.println(leafValues.toString());
+//        System.out.println(ARFTree.toString());
+//        System.out.println(leafValues.toString());
         ARFTree = newTree;
         leafValues = newLeaves;
-        //System.out.println(ARFTree.toString());
-        //System.out.println(leafValues.toString());
-        //System.out.println(nextRemove);
-
+//        System.out.println(ARFTree.toString());
+//        System.out.println(leafValues.toString());
+//        System.out.println(nextRemove);
+       
         if (nextRemove == true) {
             removeRange(newClearRange);
         }
 
     }
 
+    public void optimize() {
+        
+    }
+    
     public boolean isInRange(int minRange, int maxRange, int key_min, int key_max) {
         return minRange >= key_min && maxRange <= key_max;
     }
 
     @Override
     public void addKey(int key_min, int key_max) {
-        //do something nice with this Tim
+       Queue<int[]> rangeList;
+        rangeList = new LinkedList();
+        rangeList.add(filterRange.clone());
+        int curTree = 1;
+        int curLeaf = 1;
+
+        /* All of the tree is searched for the range */
+        while (!rangeList.isEmpty()) {
+
+            int[] curRange = rangeList.poll();
+
+            int midRange = (curRange[0] + curRange[1]) / 2;
+            /* For a node with two leaves as children */
+            if (ARFTree.get(curTree) == false && ARFTree.get(curTree + 1) == false) {
+
+
+                /* Checks left child if in range and if true */
+                if (checkRange(curRange[0], midRange, key_min, key_max) && leafValues.get(curLeaf) == false) {
+                    leafValues.set(curLeaf);
+                }
+
+                ++curLeaf;
+
+                /* Checks right child if in range and if true */
+                if (checkRange(midRange + 1, curRange[1], key_min, key_max) && leafValues.get(curLeaf) == false) {
+                    leafValues.set(curLeaf);
+                }
+
+                ++curLeaf;
+
+
+                /* For a node with the only a leaf in the right child */
+            } else if (ARFTree.get(curTree) == true && ARFTree.get(curTree + 1) == false) {
+                /* Checks right child if in range and if true */
+                if (checkRange(midRange + 1, curRange[1], key_min, key_max) && leafValues.get(curLeaf) == false) {
+                    leafValues.set(curLeaf);
+                }
+                ++curLeaf;
+
+                curRange[1] = midRange;
+                rangeList.add(curRange);
+
+                /* For a node with the only a leaf in the left child */
+            } else if (ARFTree.get(curTree) == false && ARFTree.get(curTree + 1) == true) {
+
+                /* Checks left child if in range and if true */
+                if (checkRange(curRange[0], midRange, key_min, key_max) && leafValues.get(curLeaf) == true) {
+                    leafValues.set(curLeaf);
+                }
+                ++curLeaf;
+
+                /* Set new range as current range */
+                curRange[0] = midRange + 1;
+                rangeList.add(curRange);
+
+                /* For a node with no child leaves */
+            } else if (ARFTree.get(curTree) == true && ARFTree.get(curTree + 1) == true) {
+
+                /* Two ranges are made */
+                int[] botRange = {curRange[0], midRange};
+                rangeList.add(botRange);
+
+                int[] topRange = {midRange + 1, curRange[1]};
+                rangeList.add(topRange);
+            }
+
+            /* Place in the tree is updated */
+            curTree = curTree + 2;
+        }
     }
 
 }
