@@ -324,6 +324,9 @@ public class ARFFilterTest extends FilterTestCases {
         for (int i = 0; i < startValue.length; i++) {
             int[] corrValues = {corr_min[i], corr_max[i]};
             int[] clearValues = instance.findDeEsc(startValue[i]);
+            if(clearValues[0] == -1) {
+                clearValues = instance.findDeEsc(0);
+            }
             Assert.assertEquals("Cleared values minimum: " + corrValues[0]
                     + " and " + clearValues[0], corrValues[0], clearValues[0]);
             Assert.assertEquals("Cleared values minimum: " + corrValues[1]
