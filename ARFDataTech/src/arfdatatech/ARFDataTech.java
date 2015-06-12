@@ -36,6 +36,7 @@ public class ARFDataTech {
         int[] range = {0, domain};
         int numQueries = 5000;
         int numQueriesT = numQueries;
+        int mu = 30;
 
         //zipf 8b
         double exponent = 3;
@@ -49,12 +50,12 @@ public class ARFDataTech {
         for (int bpk = 1; bpk <= 10; bpk++) {
             System.out.println("Now processing bpk " + bpk);
             System.out.println("8a");
-            rangeQuery_8a(dkeys, domain, range, bpk, numQueries, numQueriesT);
+            rangeQuery_8a(dkeys, domain, range, mu, bpk, numQueries, numQueriesT);
             //System.out.println("8b");
-            //rangeQuery_8b(dkeys, domain, range, exponent, numPeaks, bpk, numQueries, numQueriesT);
+            //rangeQuery_8b(dkeys, domain, range, mu, exponent, numPeaks, bpk, numQueries, numQueriesT);
         }
 
-        for (int mu = mu_min; mu <= mu_max; mu++) {
+        for (int muv = mu_min; muv <= mu_max; muv++) {
             //System.out.println("Now processing mu " + mu);
             //System.out.println("8c");
             //rangeQuery_8c(dkeys, domain, range, bitsperkey, mu, numQueries, numQueriesT);
@@ -62,7 +63,7 @@ public class ARFDataTech {
 
     }
 
-    private void rangeQuery_8a(int dkeys, int domain, int[] range, int bpkey, int numQueries, int numQueriesT) {
+    private void rangeQuery_8a(int dkeys, int domain, int[] range, int mu, int bpkey, int numQueries, int numQueriesT) {
         DataBaseIndexer db = new DataBaseIndexer("Uniform database", dkeys, domain, new UniformGenerator(domain));
 
         BloomFilter bloom = new BloomFilter("Bloomfilter " + bpkey + " bpe", domain, dkeys, bpkey, db);
@@ -72,7 +73,7 @@ public class ARFDataTech {
         ARFFilter arf1b = new ARFFilter("Adapt-1bit ARF", dkeys * bpkey, range, 2);
 
         NumberGenerator rng = new UniformGenerator(domain);
-        QueryStrategy qst = new QueryStrategy(numQueriesT, rng, 30);
+        QueryStrategy qst = new QueryStrategy(numQueriesT, rng, mu);
         trainARF(qst, arf1b, db);
         trainARF(qst, arf0b, db);
         trainARF(qst, arfno, db);
@@ -85,14 +86,14 @@ public class ARFDataTech {
         filters.add(arf1b);
         //filters.add(tf);
 
-        QueryStrategy qs = new QueryStrategy(numQueries, new UniformGenerator(domain), 30);
+        QueryStrategy qs = new QueryStrategy(numQueries, new UniformGenerator(domain), mu);
         List<QueryStrategy> queries = new ArrayList<>();
         queries.add(qs);
 
         runExperiment("Exp_8a-" + bpkey, filters, db, false, queries);
     }
 
-    private void rangeQuery_8b(int dkeys, int domain, int[] range, double exp, int numPeaks, int bpkey, int numQueries) {
+    private void rangeQuery_8b(int dkeys, int domain, int[] range, int mu, double exp, int numPeaks, int bpkey, int numQueries) {
         DataBaseIndexer db = new DataBaseIndexer("Uniform database", dkeys, domain, new UniformGenerator(domain));
 
         BloomFilter bloom = new BloomFilter("Bloomfilter " + bpkey + " bpe", domain, dkeys, bpkey, db);
@@ -112,7 +113,7 @@ public class ARFDataTech {
             peaks.add(r.nextInt(domain));
         }
 
-        QueryStrategy qs = new QueryStrategy(numQueries, new ZipfGenerator(domain, exp, peaks), 30);
+        QueryStrategy qs = new QueryStrategy(numQueries, new ZipfGenerator(domain, exp, peaks), mu);
         List<QueryStrategy> queries = new ArrayList<>();
         queries.add(qs);
 
@@ -360,6 +361,9 @@ public class ARFDataTech {
             }
             todo--;
         }
+        
+        arf.optimize();
+        
         while (arf.isTooBig()) {
             arf.deEscalate();
         }

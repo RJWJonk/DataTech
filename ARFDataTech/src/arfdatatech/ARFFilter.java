@@ -294,6 +294,7 @@ public class ARFFilter extends Filter {
 
         ARFTree = newTree;
         leafValues = newLeaves;
+        optimize();
 
     }
 
@@ -325,7 +326,7 @@ public class ARFFilter extends Filter {
 
                 /* Checks left child if in range and if true */
                 if (leafValues.get(curLeaf) == false) {
-                    if (curTree / 2 >= removeValue && (!timeOutValues.get(curLeaf) && filter == 2) || filter != 2) {
+                    if (curTree / 2 >= removeValue && ((!timeOutValues.get(curLeaf) && filter == 2) || filter != 2)) {
                         return curRange;
                     }
                 }
@@ -334,7 +335,7 @@ public class ARFFilter extends Filter {
 
                 /* Checks left child if in range and if true */
                 if (leafValues.get(curLeaf) == false) {
-                    if (curTree / 2 >= removeValue && (!timeOutValues.get(curLeaf) && filter == 2) || filter != 2) {
+                    if (curTree / 2 >= removeValue && ((!timeOutValues.get(curLeaf) && filter == 2) || filter != 2)) {
                         return curRange;
                     }
                 }
