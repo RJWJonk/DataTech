@@ -300,12 +300,24 @@ public class ARFFilter extends Filter {
 
     public void deEscalate() {
         System.out.println("De-escalate: " + numElements * 3 + 1 + " -- " + maxElements);
+        
         Random rand = new Random();
         int removeValue = rand.nextInt(numElements);
-
         int[] clearRange = findDeEsc(removeValue);
+        int[] noRange = {-1, -1};
+        
+        if (clearRange[0] == -1) {
+            clearRange = findDeEsc(1);
+            if (clearRange[0] == -1) {
+                clearRange = findDeEsc(0);
+            }
+        }
 
+        if (clearRange == noRange) {
+            System.out.println("No deEscalatable nodes found");
+        } else {
         removeRange(clearRange, true);
+        }
     }
 
     public int[] findDeEsc(int removeValue) {
@@ -330,7 +342,10 @@ public class ARFFilter extends Filter {
                         return curRange;
                     }
                 }
-                timeOutValues.clear(curLeaf);
+                
+                if (filter == 2) {
+                    timeOutValues.clear(curLeaf);
+                }
                 ++curLeaf;
 
                 /* Checks left child if in range and if true */
@@ -339,7 +354,9 @@ public class ARFFilter extends Filter {
                         return curRange;
                     }
                 }
-                timeOutValues.clear(curLeaf);
+                if (filter == 2) {
+                    timeOutValues.clear(curLeaf);
+                }
                 ++curLeaf;
 
 
@@ -377,7 +394,8 @@ public class ARFFilter extends Filter {
             curTree = curTree + 2;
         }
 
-        return findDeEsc(1);
+        int[] noRange = {-1, -1};
+        return noRange;
     }
 
     public void removeRange(int[] clearRange, boolean newValue) {
