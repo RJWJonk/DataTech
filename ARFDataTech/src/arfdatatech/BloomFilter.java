@@ -22,7 +22,7 @@ public class BloomFilter extends Filter {
         super(name);
         this.domain = domain;
         this.bitArray = new boolean[elements * bpe];
-        System.out.println("Number of bits in bloom: " + bitArray.length);
+        //System.out.println("Number of bits in bloom: " + bitArray.length);
         //int numHash = 3;
         int numHash = (int) Math.ceil(bpe * Math.log(2));
         Random random = new Random();
