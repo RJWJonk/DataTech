@@ -31,12 +31,12 @@ public class ARFDataTech {
     private void rangeQueries() {
 
         //global variables 8a 8b 8c
-        int dkeys = 10000;
-        int domain = (int) Math.pow(2, 20);
+        int dkeys = 1000;
+        int domain = (int) Math.pow(2, 17);
         int[] range = {0, domain};
         int numQueries = 5000;
         int numQueriesT = numQueries;
-        int mu = 30;
+        int mu = 5;
 
         //zipf 8b
         double exponent = 3;

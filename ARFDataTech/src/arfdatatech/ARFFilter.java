@@ -167,7 +167,7 @@ public class ARFFilter extends Filter {
         if (filter == 0 && numElements > maxElements) {
             return;
         }
-        System.out.println("Escalate: " + (numElements * 3 + 1) + " -- " + maxElements);
+        //System.out.println("Escalate: " + (numElements * 3 + 1) + " -- " + maxElements);
 
         /* Values for the ranges */
         Queue<int[]> rangeList;
@@ -299,7 +299,8 @@ public class ARFFilter extends Filter {
     }
 
     public void deEscalate() {
-        System.out.println("De-escalate: " + (numElements * 3 + 1) + " -- " + maxElements);
+        //System.out.println(ARFTree.toString());
+        //System.out.println("De-escalate: " + (numElements * 3 + 1) + " -- " + maxElements);
         
         Random rand = new Random();
         int removeValue = rand.nextInt(numElements);
@@ -430,12 +431,14 @@ public class ARFFilter extends Filter {
                         newLeaves.set(curNewLeaf);
                     }
                     ++curLeaf;
+                    ++curNewLeaf;
 
                     /* Checks right child if in range and if true */
                     if (leafValues.get(curLeaf)) {
                         newLeaves.set(curNewLeaf);
                     }
                     ++curLeaf;
+                    ++curNewLeaf;
 
                 } else {
                     curNewTree = curNewTree - 2;
