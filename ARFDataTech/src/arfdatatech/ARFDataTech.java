@@ -362,7 +362,7 @@ public class ARFDataTech {
             todo--;
         }
         
-        arf.optimize();
+        //arf.optimize();
         
         while (arf.isTooBig()) {
             arf.deEscalate();
