@@ -530,7 +530,7 @@ public class ARFFilter extends Filter {
         rangeList.add(filterRange.clone());
         int curTree = 1;
         int curLeaf = 1;
-        
+
         boolean optimized;
 
         /* All of the tree is searched for the range */
@@ -539,7 +539,7 @@ public class ARFFilter extends Filter {
             int[] curRange = rangeList.poll();
 
             int midRange = (curRange[0] + curRange[1]) / 2;
-            
+
             /* For a node with two leaves as children */
             if (ARFTree.get(curTree) == false && ARFTree.get(curTree + 1) == false) {
 
@@ -585,7 +585,7 @@ public class ARFFilter extends Filter {
 
         return false;
     }
-    
+
     public void optimize() {
         boolean optimizable = true;
         if (optimizable) {
@@ -673,4 +673,5 @@ public class ARFFilter extends Filter {
     public boolean isTooBig() {
         return numElements * 3 + 1 > maxElements;
     }
+
 }
