@@ -20,7 +20,7 @@ public class ARFFilter extends Filter {
     private final int maxElements;
     private int[] filterRange;
     private final int filter; // 0 - no adapt, 1 - simple adapt, 2 - more adapt
-    
+
     public static final int NO_ADAPT = 0;
     public static final int BIT_0 = 1;
     public static final int BIT_1 = 2;
@@ -33,7 +33,7 @@ public class ARFFilter extends Filter {
     public ARFFilter(String name, int maxElements, int[] range, int ftype) {
         super(name);
         this.maxElements = maxElements;
-        this.filter=ftype;
+        this.filter = ftype;
         BitSet values = new BitSet();
         values.set(1);
         values.set(2);
@@ -51,11 +51,11 @@ public class ARFFilter extends Filter {
     public BitSet getTree() {
         return ARFTree;
     }
-    
+
     public BitSet getLeaves() {
         return leafValues;
     }
-    
+
     @Override
     public boolean query(int key_min, int key_max) {
         Queue<int[]> rangeList;
@@ -142,16 +142,22 @@ public class ARFFilter extends Filter {
 
     @Override
     public void adjustFilter(int key_min, int key_max) {
+        if (filter == 0 && numElements > maxElements) {
+            return;
+        }
         escalate(key_min, key_max);
-        while (numElements > maxElements) {
+
+        while (filter != 0 && numElements > maxElements) {
             deEscalate();
         }
     }
 
     public void escalate(int key_min, int key_max) {
-        if (filter == 0 && numElements > maxElements) return;
+        if (filter == 0 && numElements > maxElements) {
+            return;
+        }
         //System.out.println(numElements + " -- " + maxElements);
-        
+
         /* Values for the ranges */
         Queue<int[]> rangeList;
         rangeList = new LinkedList();
@@ -484,14 +490,14 @@ public class ARFFilter extends Filter {
             curNewTree = curNewTree + 2;
         }
 
-        System.out.println(ARFTree.toString());
-        System.out.println(leafValues.toString());
+        //System.out.println(ARFTree.toString());
+        //System.out.println(leafValues.toString());
         ARFTree = newTree;
         leafValues = newLeaves;
-        System.out.println(ARFTree.toString());
-        System.out.println(leafValues.toString());
-        System.out.println(nextRemove);
-        
+        //System.out.println(ARFTree.toString());
+        //System.out.println(leafValues.toString());
+        //System.out.println(nextRemove);
+
         if (nextRemove == true) {
             removeRange(newClearRange);
         }

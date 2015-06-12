@@ -31,10 +31,10 @@ public class ARFDataTech {
     private void rangeQueries() {
 
         //global variables 8a 8b 8c
-        int dkeys = 1024;
-        int domain = (int) Math.pow(2, 11);
+        int dkeys = 100000;
+        int domain = (int) Math.pow(2, 24);
         int[] range = {0, domain};
-        int numQueries = 30000;
+        int numQueries = 3000;
 
         //zipf 8b
         double exponent = 3;
@@ -71,13 +71,13 @@ public class ARFDataTech {
         ARFFilter arf1b = new ARFFilter("Adapt-1bit ARF", dkeys * bpkey, range, 2);
         //TODO ARF variants
         List<Filter> filters = new ArrayList<>();
-        filters.add(bloom);
-        //filters.add(arfno);
+        //filters.add(bloom);
+        filters.add(arfno);
         //filters.add(arf0b);
         //filters.add(arf1b);
         //filters.add(tf);
         
-        QueryStrategy qs = new QueryStrategy(numQueries, new UniformGenerator(domain), 0);
+        QueryStrategy qs = new QueryStrategy(numQueries, new UniformGenerator(domain), 30);
         List<QueryStrategy> queries = new ArrayList<>();
         queries.add(qs);
 

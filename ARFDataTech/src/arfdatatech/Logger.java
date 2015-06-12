@@ -78,7 +78,7 @@ public class Logger {
         }
 
         try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(f, true)))) {
-            writer.println(id + ";" + filter + ";" + data + ";" + (1 - dataHits_recent / totalQueries_recent ) + ";" + (1 - dataHits / dataAccesses ));
+            writer.println(id + ";" + filter + ";" + data + ";" + (1 - dataHits_recent / totalQueries_recent ) + ";" + (1 - dataHits / totalQueries ));
         } catch (Exception e) {
             return false;
         }
