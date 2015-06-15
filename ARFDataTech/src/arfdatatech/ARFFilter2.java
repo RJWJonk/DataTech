@@ -348,7 +348,7 @@ public class ARFFilter2 extends Filter {
     }
 
     public boolean isTooBig() {
-        return 3 * curNodes + 1 > maxElements;
+        return ((filter == 2) ? 4 : 3) * curNodes + 1 > maxElements;
     }
 
     private class ARFTree {

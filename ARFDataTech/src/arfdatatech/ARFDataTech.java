@@ -6,6 +6,8 @@ import java.util.Random;
 import javafx.util.Pair;
 
 public class ARFDataTech {
+    
+    private final int factor = 4;
 
     public ARFDataTech() {
     }
@@ -20,9 +22,9 @@ public class ARFDataTech {
          */
         ARFDataTech adt = new ARFDataTech();
 
-        //adt.rangeQueries();
+        adt.rangeQueries();
         //adt.dataChange();
-        adt.workloadChange();
+        //adt.workloadChange();
     }
 
     /* 
@@ -31,12 +33,12 @@ public class ARFDataTech {
     private void rangeQueries() {
 
         //global variables 8a 8b 8c
-        int dkeys = 100000;
-        int domain = (int) Math.pow(2, 24);
+        int dkeys = 100000/(factor*factor);
+        int domain = (int) Math.pow(2, 24) / (factor*factor);
         int[] range = {0, domain};
-        int numQueries = 300000;
+        int numQueries = 300000 / factor;
         int numQueriesT = numQueries;
-        int mu = 30;
+        int mu = 30 / factor;
 
         //zipf 8b
         double exponent = 3;
@@ -166,13 +168,13 @@ public class ARFDataTech {
     private void dataChange() {
 
         //global variables 11a 11b
-        int dkeys = 100000;
-        int domain = (int) Math.pow(2, 24);
+        int dkeys = 100000 / (factor*factor);
+        int domain = (int) Math.pow(2, 24)/ (factor*factor);
         int[] range = {0, domain};
-        int numQueries = 4000;
+        int numQueries = 300000 / factor;
         int numQueriesT = numQueries;
         int bpk = 8;
-        int mu = 30;
+        int mu = 30 / factor;
 
         //zipf 8b
         double exponent = 3;
@@ -260,13 +262,13 @@ public class ARFDataTech {
     private void workloadChange() {
 
         //global variables 11a 11b
-        int dkeys = 100000;
-        int domain = (int) Math.pow(2, 24);
+        int dkeys = 100000 / (factor*factor);
+        int domain = (int) Math.pow(2, 24) / (factor*factor);
         int[] range = {0, domain};
-        int numQueries = 2000;
+        int numQueries = 300000 / factor;
         int numQueriesT = numQueries;
         int bpk = 8;
-        int mu = 30;
+        int mu = 30 / factor;
 
         //zipf 8b
         double exponent = 3;
@@ -389,7 +391,7 @@ public class ARFDataTech {
 
         System.out.println("Commence training");
         while (todo > 0) {
-            if (todo % 10000 == 0) {
+            if (todo % 100 == 0) {
                 System.out.println(todo);
             }
 
@@ -407,9 +409,8 @@ public class ARFDataTech {
         }
 
         //arf.optimize();
-        while (arf.isTooBig()) {
+        System.out.println("De-escalating..");
             arf.deEscalate();
-        }
     }
 
     public class QueryStrategy {
