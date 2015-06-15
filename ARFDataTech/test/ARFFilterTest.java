@@ -324,7 +324,7 @@ public class ARFFilterTest extends FilterTestCases {
         for (int i = 0; i < startValue.length; i++) {
             int[] corrValues = {corr_min[i], corr_max[i]};
             int[] clearValues = instance.findDeEsc(startValue[i]);
-            if(clearValues[0] == -1) {
+            if (clearValues[0] == -1) {
                 clearValues = instance.findDeEsc(0);
             }
             Assert.assertEquals("Cleared values minimum: " + corrValues[0]
@@ -333,7 +333,7 @@ public class ARFFilterTest extends FilterTestCases {
                     + " and " + clearValues[1], corrValues[1], clearValues[1]);
         }
     }
-    
+
     @Test
     public void testFindDeEsc1() {
         BitSet tree = new BitSet(100); // Tree: 11.01.00.00
@@ -345,17 +345,17 @@ public class ARFFilterTest extends FilterTestCases {
         leaves.set(1);
         leaves.set(3);
         leaves.set(4);
-        
+
         int[] range = {0, 20};
         int[] corr_min = {11, 6};
         int[] corr_max = {20, 10};
         int[] startValue = {1, 3};
-        
+
         testFindDeEsc(tree, leaves, range, corr_min, corr_max, startValue);
-        
+
     }
-    
-        @Test
+
+    @Test
     public void testFindDeEsc2() {
         BitSet tree = new BitSet(100); // Tree: 11.01.00.11.00.00
         tree.set(1);
@@ -370,14 +370,36 @@ public class ARFFilterTest extends FilterTestCases {
         leaves.set(4);
         leaves.set(6);
         leaves.set(9);
-        
+
         int[] range = {0, 20};
         int[] corr_min = {11, 6, 9};
         int[] corr_max = {20, 8, 10};
         int[] startValue = {6, 3, 5};
-        
+
         testFindDeEsc(tree, leaves, range, corr_min, corr_max, startValue);
-        
+
+    }
+
+    @Test
+    public void testFindDeEsc3() {
+        BitSet tree = new BitSet(100); // Tree: 11.01.00.11.00.00
+        tree.set(1);
+        tree.set(2);
+        tree.set(4);
+        tree.set(7);
+        tree.set(8);
+
+        BitSet leaves = new BitSet(100); // Leaves: 1.00.00.11.00
+        leaves.set(1);
+        leaves.set(7);
+        leaves.set(6);
+
+        int[] range = {0, 20};
+        int[] corr_min = {-1};
+        int[] corr_max = {-1};
+        int[] startValue = {-1};
+
+        testFindDeEsc(tree, leaves, range, corr_min, corr_max, startValue);
     }
 
     public void testRemoveRange(BitSet tree, BitSet leaves, int[] range, int[] clearRange, BitSet newTree, BitSet newLeaves) {
@@ -385,10 +407,10 @@ public class ARFFilterTest extends FilterTestCases {
         instance.setTree(tree, leaves, range);
 
         instance.removeRange(clearRange, true);
-        
-        Assert.assertEquals("Same tree ", instance.getTree(), newTree); 
+
+        Assert.assertEquals("Same tree ", instance.getTree(), newTree);
     }
-    
+
 //    @Test
     /* Single removal */
     public void testRemoveRange1() {
@@ -401,10 +423,10 @@ public class ARFFilterTest extends FilterTestCases {
         leaves.set(1);
         leaves.set(3);
         leaves.set(4);
-        
+
         int[] range = {0, 20};
         int[] clearRange = {11, 20};
-        
+
         BitSet newTree = new BitSet(100); // Tree: 10.01.00
         newTree.set(1);
         newTree.set(4);
@@ -413,10 +435,10 @@ public class ARFFilterTest extends FilterTestCases {
         newLeaves.set(1);
         newLeaves.set(2);
         newLeaves.set(3);
-        
+
         testRemoveRange(tree, leaves, range, clearRange, newTree, newLeaves);
     }
-    
+
     @Test
     /* Double removal */
     public void testRemoveRange2() {
@@ -429,18 +451,125 @@ public class ARFFilterTest extends FilterTestCases {
         leaves.set(1);
         leaves.set(3);
         leaves.set(4);
-        
-        int[] range = {0, 20};        
+
+        int[] range = {0, 20};
         int[] clearRange = {6, 10};
-        
+
         BitSet newTree = new BitSet(100); // Tree: 01.00
         newTree.set(2);
 
         BitSet newLeaves = new BitSet(100); // Leaves: 1.01
         newLeaves.set(1);
         newLeaves.set(3);
-        
+
         testRemoveRange(tree, leaves, range, clearRange, newTree, newLeaves);
+    }
+
+    public void testDeEscalate(int[] range, int[] escRange_min, int[] escRange_max) {
+        setInstance("test DeEscalate", 100, range);
+
+        for (int i = 0; i < escRange_min.length; i++) {
+            instance.escalate(escRange_min[i], escRange_max[i]);
+        }
+
+        instance.deEscalate();
+
+        BitSet newTree = instance.getTree();
+        System.out.println(newTree.toString());
+
+        BitSet newLeaves = instance.getLeaves();
+        System.out.println(newLeaves.toString());
+    }
+
+    @Test
+    public void testDeEscalate1() {
+        int[] escRange_min = {8, 11};
+        int[] escRange_max = {9, 15};
+
+        int[] range = {0, 20};
+
+        testDeEscalate(range, escRange_min, escRange_max);
+    }
+
+    @Test
+    public void testDeEscalate2() {
+        int[] escRange_min = {6, 11, 16};
+        int[] escRange_max = {8, 14, 18};
+
+        int[] range = {0, 20};
+
+        testDeEscalate(range, escRange_min, escRange_max);
+    }
+
+    public void testOptimize(BitSet tree, BitSet values, BitSet newTree, BitSet newValues) {
+        int[] range = {0, 20};
+        setInstance("test Optimize", 100, range);
+        instance.setTree(tree, values, range);
+        
+        instance.optimize();
+        
+        Assert.assertEquals("Same tree after optimizing", newTree, instance.getTree());
+        Assert.assertEquals("Same leaves after optimizing", newValues, instance.getLeaves());       
+        
+    }
+    
+//    @Test
+    public void testOptimize1() {
+        BitSet tree = new BitSet(14); // Tree: "11.01.11.00.01.00.00"
+        tree.set(1);
+        tree.set(2);
+        tree.set(4);
+        tree.set(5);
+        tree.set(6);
+        tree.set(10);
+        BitSet values = new BitSet(8); // Leaf Values: "1.01.0.00.11"
+        values.set(1);
+        values.set(3);
+        values.set(7);
+        values.set(8);
+        int[] range = {0, 20};
+        
+         BitSet newTree = new BitSet(14); // Tree: "11.01.10.00.00"
+        newTree.set(1);
+        newTree.set(2);
+        newTree.set(4);
+        newTree.set(5);
+
+        BitSet newValues = new BitSet(8); // Leaf Values: "1.0.01.01"
+        newValues.set(1);
+        newValues.set(4);
+        newValues.set(6);
+        
+        testOptimize(tree, values, newTree, newValues);
+        
+    }
+
+    @Test
+    public void testOptimize2() {
+        BitSet tree = new BitSet(14); // Tree: "11.01.11.00.10.00.00"
+        tree.set(1);
+        tree.set(2);
+        tree.set(4);
+        tree.set(5);
+        tree.set(6);
+        tree.set(9);
+        BitSet values = new BitSet(8); // Leaf Values: "1.11.0.11.00"
+        values.set(1);
+        values.set(2);
+        values.set(3);
+        values.set(5);
+        values.set(6);
+        int[] range = {0, 20};
+        
+         BitSet newTree = new BitSet(14); // Tree: "01.00"
+        newTree.set(2);
+
+        BitSet newValues = new BitSet(8); // Leaf Values: "1.01"
+        newValues.set(1);
+        newValues.set(3);
+        
+        testOptimize(tree, values, newTree, newValues);
+        
     }
     
 }
