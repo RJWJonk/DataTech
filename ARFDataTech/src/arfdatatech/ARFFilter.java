@@ -581,7 +581,6 @@ public class ARFFilter extends Filter {
 
                 if (leafValues.get(curLeaf) == leafValues.get(curLeaf + 1)) {
                     removeRange(curRange, leafValues.get(curLeaf));
-                    System.out.println(curRange[0] + " to " + curRange[1]);
                     return true;
                 }
 
@@ -624,10 +623,6 @@ public class ARFFilter extends Filter {
     public void optimize() {
         boolean optimizable = true;
         while (optimizable) {
-                                System.out.println(ARFTree.toString());
-        System.out.println(leafValues.toString());
-            optimizable = partialOptimize();
-
         }
     }
 
