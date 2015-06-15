@@ -702,6 +702,7 @@ public class ARFFilter extends Filter {
             /* Place in the tree is updated */
             curTree = curTree + 2;
         }
+        
     }
 
     public boolean isTooBig() {

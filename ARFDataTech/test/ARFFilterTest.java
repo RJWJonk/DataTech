@@ -571,5 +571,37 @@ public class ARFFilterTest extends FilterTestCases {
         testOptimize(tree, values, newTree, newValues);
         
     }
+
+    @Test
+    public void addKey() {
+        
+                int[] range = {0, 20};
+        setInstance("test addKey", 100, range); 
+
+        
+        instance.escalate(3, 7);
+        instance.escalate(10, 13);
+        instance.escalate(16, 17);
+        
+        instance.addKey(6, 10);
+        instance.addKey(17,17);
+        
+        instance.optimize();
+        
+        boolean b = instance.query(0, 2);
+        Assert.assertEquals("Correct Query, 0 to 2", true, b);
+        b = instance.query(3, 5);
+        Assert.assertEquals("Correct Query, 3 to 5", false, b);
+        b = instance.query(6, 10);
+        Assert.assertEquals("Correct Query, 6 to 10", true, b);
+        b = instance.query(11, 13);
+        Assert.assertEquals("Correct Query, 11 to 13", false, b);
+        b = instance.query(14, 20);
+        Assert.assertEquals("Correct Query, 14 to 20", true, b);
+       
+        System.out.println(instance.getTree().toString());
+        System.out.println(instance.getLeaves().toString());
+        
+    }
     
 }
