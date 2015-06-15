@@ -623,6 +623,7 @@ public class ARFFilter extends Filter {
     public void optimize() {
         boolean optimizable = true;
         while (optimizable) {
+            optimizable = partialOptimize();
         }
     }
 
