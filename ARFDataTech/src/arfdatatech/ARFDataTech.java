@@ -7,7 +7,7 @@ import javafx.util.Pair;
 
 public class ARFDataTech {
     
-    private final int factor = 4;
+    private final int factor = 16;
 
     public ARFDataTech() {
     }
@@ -22,9 +22,9 @@ public class ARFDataTech {
          */
         ARFDataTech adt = new ARFDataTech();
 
-        adt.rangeQueries();
+//        adt.rangeQueries();
         //adt.dataChange();
-        //adt.workloadChange();
+        adt.workloadChange();
     }
 
     /* 
@@ -51,17 +51,17 @@ public class ARFDataTech {
 
         for (int bpk = 1; bpk <= 10; bpk++) {
             System.out.println("Now processing bpk " + bpk);
-            System.out.println("8a");
-            rangeQuery_8a(dkeys, domain, range, mu, bpk, numQueries, numQueriesT);
+//            System.out.println("8a");
+//            rangeQuery_8a(dkeys, domain, range, mu, bpk, numQueries, numQueriesT);
             System.out.println("8b");
             rangeQuery_8b(dkeys, domain, range, mu, exponent, numPeaks, bpk, numQueries, numQueriesT);
         }
 
-        for (int muv = mu_min; muv <= mu_max; muv++) {
-            System.out.println("Now processing mu " + mu);
-            System.out.println("8c");
-            rangeQuery_8c(dkeys, domain, range, bitsperkey, muv, numQueries, numQueriesT);
-        }
+//        for (int muv = mu_min; muv <= mu_max; muv++) {
+//            System.out.println("Now processing mu " + mu);
+//            System.out.println("8c");
+//            rangeQuery_8c(dkeys, domain, range, bitsperkey, muv, numQueries, numQueriesT);
+//        }
 
     }
 
@@ -311,7 +311,7 @@ public class ARFDataTech {
             peaks2.add(r.nextInt(domain));
         }
 
-        QueryStrategy qs1 = new QueryStrategy(numQueries, new ZipfGenerator(domain, exp, peaks1), mu);
+        QueryStrategy qs1 = new QueryStrategy(numQueries, new ZipfGenerator(domain, exp, peaks), mu);
         QueryStrategy qs2 = new QueryStrategy(numQueries, new ZipfGenerator(domain, exp, peaks2), mu);
 
         List<QueryStrategy> queries = new ArrayList<>();
