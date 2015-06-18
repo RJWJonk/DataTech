@@ -60,7 +60,7 @@ public class ARFDataTech {
         for (int muv = mu_min; muv <= mu_max; muv++) {
             System.out.println("Now processing mu " + mu);
             System.out.println("8c");
-            rangeQuery_8c(dkeys, domain, range, bitsperkey, mu, numQueries, numQueriesT);
+            rangeQuery_8c(dkeys, domain, range, bitsperkey, muv, numQueries, numQueriesT);
         }
 
     }
@@ -121,11 +121,6 @@ public class ARFDataTech {
         filters.add(arfno);
         filters.add(arf0b);
         filters.add(arf1b);
-
-        peaks = new ArrayList();
-        for (int i = 0; i < numPeaks; i++) {
-            peaks.add(r.nextInt(domain));
-        }
 
         QueryStrategy qs = new QueryStrategy(numQueries, new ZipfGenerator(domain, exp, peaks), mu);
         List<QueryStrategy> queries = new ArrayList<>();
@@ -230,13 +225,13 @@ public class ARFDataTech {
         ARFFilter2 arf0b = new ARFFilter2("Adapt-0bit ARF", domain * bpkey, range, 1);
         ARFFilter2 arf1b = new ARFFilter2("Adapt-1bit ARF", domain * bpkey, range, 2);
 
-        r = new Random();
-        List<Integer> peakst = new ArrayList();
-        for (int i = 0; i < numPeaks; i++) {
-            peakst.add(r.nextInt(domain));
-        }
+//        r = new Random();
+//        List<Integer> peakst = new ArrayList();
+//        for (int i = 0; i < numPeaks; i++) {
+//            peakst.add(r.nextInt(domain));
+//        }
 
-        NumberGenerator rng = new ZipfGenerator(domain, exp, peaks);
+        NumberGenerator rng = new UniformGenerator(domain);
         QueryStrategy qst = new QueryStrategy(numQueriesT, rng, mu);
         trainARF(qst, arf1b, db);
         trainARF(qst, arf0b, db);
@@ -288,7 +283,12 @@ public class ARFDataTech {
         ARFFilter2 arf0b = new ARFFilter2("Adapt-0bit ARF", domain * bpkey, range, 1);
         ARFFilter2 arf1b = new ARFFilter2("Adapt-1bit ARF", domain * bpkey, range, 2);
 
-        NumberGenerator rng = new UniformGenerator(domain);
+        Random r = new Random();
+        List<Integer> peaks = new ArrayList();
+        for (int i = 0; i < numPeaks; i++) {
+            peaks.add(r.nextInt(domain));
+        }
+        NumberGenerator rng = new ZipfGenerator(domain, exp, peaks);
         QueryStrategy qst = new QueryStrategy(numQueriesT, rng, mu);
         trainARF(qst, arf1b, db);
         trainARF(qst, arf0b, db);
@@ -301,7 +301,7 @@ public class ARFDataTech {
         filters.add(arf0b);
         filters.add(arf1b);
 
-        Random r = new Random();
+
         List<Integer> peaks1 = new ArrayList();
         for (int i = 0; i < numPeaks; i++) {
             peaks1.add(r.nextInt(domain));
